@@ -1,0 +1,9 @@
+dependecies
+
+
+
+client
+-------
+apt-get install gcc python3-dev
+pip3 install setuptools
+pip3 install psutil
