@@ -57,14 +57,17 @@ def transferupload(s,command):
  
 def transfergrab(s,path):
 	if os.path.exists(path):
-		f=open(path,'rb')
-		f.seek(0)
-		packet=f.read(1024)
-		while packet:
-			s.send(packet)
+		if os.path.isfile(path):
+			f=open(path,'rb')
+			f.seek(0)
 			packet=f.read(1024)
-		s.send(("DONE").encode())
-		f.close()
+			while packet:
+				s.send(packet)
+				packet=f.read(1024)
+			s.send(("DONE").encode())
+			f.close()
+		else:
+			s.send("DIR".encode())
 	else:
 		msg="The File Doesn't Exist"
 		s.send(msg.encode())

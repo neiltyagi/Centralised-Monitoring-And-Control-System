@@ -266,7 +266,10 @@ def transfergrab(conn,command):
 		print(Fore.RED)
 		print("[-]The File Doesn't Exist")   
 		print(Style.RESET_ALL)
-
+	elif "DIR" in msg:
+		print(Fore.YELLOW)
+		print("[-]Cannot grab a Directory")
+		print(Style.RESET_ALL)
 	elif "ERROR" in msg:
 		print(Fore.RED)
 		print("[-]Some error occured at remote host")
