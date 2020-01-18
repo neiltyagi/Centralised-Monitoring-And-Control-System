@@ -295,13 +295,13 @@ def transferupload(conn,command):
 			print("[+]UPLOADING")
 			print(Style.RESET_ALL)
         
-			f=open(path,'rb')
+			f=open(path,'r')
 			f.seek(0)
 			packet=f.read(1024)
-			while packet!='':
-				conn.send(packet)
+			while packet:
+				conn.send(packet.encode())
 				packet=f.read(1024)
-			conn.send("DONE")
+			conn.send("DONE".encode())
 			f.close()
 			print(Fore.GREEN)
 			print("[+]UPLOAD SUCCESSFULL")

