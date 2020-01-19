@@ -192,7 +192,7 @@ def persistence():
 
 
 persistence()
-print(os.getcwd())
+
 
 while True:
 	global s

