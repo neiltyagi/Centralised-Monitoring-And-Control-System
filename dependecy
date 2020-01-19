@@ -4,6 +4,16 @@ dependecies
 
 client
 -------
+
+
+DEBIAN
+********
 apt-get install gcc python3-dev
 pip3 install setuptools
+pip3 install psutil
+
+
+CENTOS
+*******
+sudo yum install gcc python3-devel
 pip3 install psutil
