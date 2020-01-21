@@ -116,9 +116,37 @@ def session(conn):
 				remove(conn)
 				return
 
+		elif 'cischeck' in command:
+			cischeck(conn,command)
 
 		else:
 			print("INVALID COMMAND PRESS HELP FOR MORE INFO")
+
+
+def cischeck(conn,command):
+	conn.send(command.encode())
+	bits=conn.recv(1024).decode()
+	if bits.startswith("ERROR"):
+		print(Fore.RED)
+		print("[-] Some error occured at remote host")
+		print(Style.RESET_ALL)
+	else:
+		f=open("before.txt",'w')
+		while True:
+			f.write(bits)
+			bits=conn.recv(1024).decode()
+			if bits.endswith("DONE"):
+				f.write(bits.strip("DONE"))
+				f.close()
+				break
+
+
+		f=open("before.txt","r")
+		lines=f.readlines()
+		for line in lines:
+			print(line.strip("\n"))
+		os.remove("before.txt")
+
 
 
 
@@ -470,7 +498,9 @@ def helpbot():
     print("+-------------------+--------------------------------------------------------+")
     print("|     status        | get os memory and cpu statistics of remote client      |")
     print("+-------------------+--------------------------------------------------------+")
-    
+    print("|     cischeck      | get current cis complaint status of remote client      |")
+    print("+-------------------+--------------------------------------------------------+")
+
 
 
 

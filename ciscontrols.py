@@ -47,13 +47,12 @@ else:
 subprocess.call([inst, "install", "autofs", "-y"], stdout=FNULL)
 subprocess.call([inst, "install", "vsftpd", "-y"], stdout=FNULL)
 
-
 def status():
         try:
                 cmd = "mount | grep -E '\s/tmp\s'"
                 mount = subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
                 output = mount.communicate()[0]
-
+                x.clear_rows()
                 exit=mount.returncode
                 if exit==0:
                         x.add_row(["/tmp is configured",Fore.GREEN +"yes" + Style.RESET_ALL])
@@ -82,7 +81,6 @@ def status():
                 cmd3="ls -l /etc/passwd | cut -d ' ' -f 3,4"
                 perm3= subprocess.Popen(cmd3,shell=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
                 output3 = perm3.communicate()[0]
-
                 if output3==b'root root\n':
                         x.add_row(["/etc/passwd  ownership",Fore.GREEN +"yes" + Style.RESET_ALL])
                 else:
@@ -178,7 +176,7 @@ def status():
                 else:
                         x.add_row(["Broadcast ICMP requests are ignored",Fore.RED +"no" + Style.RESET_ALL])
                 table_txtb = x.get_string()
-                with open('before.txt','w') as file:
+                with open('/admin/before.txt','w') as file:
                         file.write(table_txtb)
                 return(True)
         except:
@@ -193,7 +191,7 @@ def enabled():
                         row.border = False
                         row.header = False
                         lst.append(str(row.get_string(fields=["Yes/No"])))
-
+                y.clear_rows()
                 if lst[0]==' \x1b[31mno\x1b[0m ':
                         cmd = "mount | grep -E '\s/tmp\s'"
                         mount = subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
@@ -294,7 +292,7 @@ def enabled():
                         y.add_row(["Broadcast ICMP requests are ignored",Fore.GREEN +"yes" + Style.RESET_ALL])
 
                 table_txt2 = y.get_string()
-                with open('after.txt','w') as file1:
+                with open('/admin/after.txt','w') as file1:
                         file1.write(table_txt2)
                 return(True)
         except:

