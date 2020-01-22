@@ -76,30 +76,7 @@ def session(conn):
 			print (shell)
 
 		elif 'shell*' in command:
-			shell,comm=command.split("*")
-			if comm.startswith("cd"):
-				print(Fore.YELLOW)
-				print("[-] Use the cd*<path> directive for directory traversal")
-				print(Style.RESET_ALL)
-			else:
-				try:
-					conn.send(command.encode())
-					shell=conn.recv(1024).decode()
-				except:
-					conn.close()
-					remove(conn)
-					return
-
-				else:
-					if shell.startswith("COMMAND_NOT_FOUND"):
-						print("command not found")
-					else:
-						while True:
-							print (shell)
-							if shell.endswith("DONE") or not shell:
-								break
-							shell=conn.recv(1024).decode()
-
+			shellexec(conn,command)
 		elif 'help' in command:
 			helpbot()
 
@@ -128,10 +105,66 @@ def session(conn):
 
 
 		elif 'cisenable' in command:
-			cisenable(conn,command)
+			try:
+				cisenable(conn,command)
+			except:
+				conn.close()
+				remove(conn)
+
+		elif 'message' in command:
+			message(conn,command)
 
 		else:
 			print("INVALID COMMAND PRESS HELP FOR MORE INFO")
+
+def shellexec(conn,command):
+	shell,comm=command.split("*")
+	if comm.startswith("cd"):
+		print(Fore.YELLOW)
+		print("[-] Use the cd*<path> directive for directory traversal")
+		print(Style.RESET_ALL)
+	else:
+		try:
+			conn.send(command.encode())
+			shell=conn.recv(1024).decode()
+		except:
+			conn.close()
+			remove(conn)
+			return
+
+		else:
+			if shell.startswith("COMMAND_NOT_FOUND"):
+				print("command not found")
+			else:
+				while True:
+					print (shell)
+					if shell.endswith("DONE") or not shell:
+						break
+					shell=conn.recv(1024).decode()
+
+
+def message(conn,commad):
+	print("List of current terminals connected to this machine")
+	print("--------------------------")
+	shellexec(conn,'shell*who')
+	print("Enter Terminal no you wish to send message")
+	print("Example tty1 tty2 etc")
+	print("---------------------------------------")
+	tty=input("terminal>")
+	msg=input("enter message>")
+	cmd="message*echo "+"'"+msg+"'"+" > "+"/dev/"+tty
+	conn.send(cmd.encode())
+	msg=conn.recv(1024).decode()
+	if 'DONE' in msg:
+		print(Fore.GREEN)
+		print("[+]message successfully sent")
+		print(Style.RESET_ALL)
+	elif 'ERROR' in msg:
+		print(Fore.RED)
+		print("[-] Some error occured at remote host")
+		print(Style.RESET_ALL)
+
+
 
 
 
@@ -528,17 +561,17 @@ def helpbot():
     print("+-------------------+--------------------------------------------------------+")
     print("|      COMMAND      | DESCRIPTION                                            |")
     print("+-------------------+--------------------------------------------------------+")
-    print("|        exit       | back to mothership(stay connected to the bot)          |")
+    print("|        exit       | back to mothership(stay connected to the remote host   |")
     print("+-------------------+--------------------------------------------------------+")
     print("|        help       | see this table                                         |")
     print("+-------------------+--------------------------------------------------------+")
-    print("|        users      | get list of users on the remote system                 |")
+    print("|        users      | get list of users on the remote host                   |")
     print("+-------------------+--------------------------------------------------------+")
-    print("|  shell*<command>  | execute a shell command on bot                         |")
+    print("|  shell*<command>  | execute a shell command on remotehost                  |")
     print("+-------------------+--------------------------------------------------------+")
-    print("|  grab*<file_name> | transfer a file from cwd of bot to cwd of mothership   |")
+    print("|  grab*<file_name> | transfer a file from cwd of bot to cwd of mothernode   |")
     print("+-------------------+--------------------------------------------------------+")
-    print("| upload*<filename> | transfer a file from cwd of mothership to cwd of bot   |")
+    print("| upload*<filename> | transfer a file from cwd of mothership to cwd of client|")
     print("+-------------------+--------------------------------------------------------+")
     print("|     cd*<path>     | change cwd of bot                                      |")
     print("+-------------------+--------------------------------------------------------+")
@@ -546,7 +579,10 @@ def helpbot():
     print("+-------------------+--------------------------------------------------------+")
     print("|     cischeck      | get current cis complaint status of remote client      |")
     print("+-------------------+--------------------------------------------------------+")
-
+    print("|     cisenable     | make remote system cis complaint                       |")
+    print("+-------------------+--------------------------------------------------------+")
+    print("|     message       | send message to the remote host                        |")
+    print("+-------------------+--------------------------------------------------------+")
 
 
 
