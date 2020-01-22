@@ -85,18 +85,21 @@ def session(conn):
 				try:
 					conn.send(command.encode())
 					shell=conn.recv(1024).decode()
+				except:
+					conn.close()
+					remove(conn)
+					return
+
+				else:
 					if shell.startswith("COMMAND_NOT_FOUND"):
 						print("command not found")
 					else:
 						while True:
 							print (shell)
-							if shell.endswith("DONE"):
+							if shell.endswith("DONE") or not shell:
 								break
 							shell=conn.recv(1024).decode()
-				except:
-					conn.close()
-					remove(conn)
-					return
+
 		elif 'help' in command:
 			helpbot()
 
@@ -117,10 +120,53 @@ def session(conn):
 				return
 
 		elif 'cischeck' in command:
-			cischeck(conn,command)
+			try:
+				cischeck(conn,command)
+			except:
+				conn.close()
+				remove(conn)
+
+
+		elif 'cisenable' in command:
+			cisenable(conn,command)
 
 		else:
 			print("INVALID COMMAND PRESS HELP FOR MORE INFO")
+
+
+
+
+def cisenable(conn,command):
+        conn.send(command.encode())
+        bits=conn.recv(1024).decode()
+        if bits.startswith("ERROR"):
+                print(Fore.RED)
+                print("[-] Some error occured at remote host")
+                print(Style.RESET_ALL)
+        else:
+                f=open("after.txt",'w')
+                while True:
+                        f.write(bits)
+                        bits=conn.recv(1024).decode()
+                        if bits.endswith("DONE"):
+                                f.write(bits.strip("DONE"))
+                                f.close()
+                                break
+
+
+                f=open("after.txt","r")
+                lines=f.readlines()
+                for line in lines:
+                        print(line.strip("\n"))
+                os.remove("after.txt")
+
+
+
+
+
+
+
+
 
 
 def cischeck(conn,command):
