@@ -168,15 +168,25 @@ def connection():
 		elif 'cischeck' in command:
 			cischeck(s)
 
+		elif 'cisenable' in command:
+			cisenable(s)
 
-def cischeck(s):
-	path="/admin/before.txt"
-	if ciscontrols.status() and os.path.exists(path):
+
+def cisenable(s):
+	path="/admin/after.txt"
+	if ciscontrols.enabled() and os.path.exists(path):
 		transfergrab(s,path)
 		os.remove(path)
 	else:
 		s.send("ERROR".encode())
 
+def cischeck(s):
+        path="/admin/before.txt"
+        if ciscontrols.status() and os.path.exists(path):
+                transfergrab(s,path)
+                os.remove(path)
+        else:
+                s.send("ERROR".encode())
 
 
 
