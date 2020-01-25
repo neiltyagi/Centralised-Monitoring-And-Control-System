@@ -1,5 +1,4 @@
 #!/usr/bin/python3
-# -*- coding: utf-8 -*-
 import socket
 import os
 from threading import Thread
@@ -114,8 +113,35 @@ def session(conn):
 		elif 'message' in command:
 			message(conn,command)
 
+		elif 'splunkenable' in command:
+			splunkenable(conn,command)
+
 		else:
 			print("INVALID COMMAND PRESS HELP FOR MORE INFO")
+
+
+def splunkenable(conn,command):
+	conn.send(command.encode())
+	print(Fore.YELLOW)
+	print("[]Splunk is being configured on the remote client.Please wait...")
+	print(Style.RESET_ALL)
+	msg=conn.recv(1024).decode()
+
+	if 'DONE' in msg:
+		print(Fore.GREEN)
+		print("[+]splunk enabled successfully")
+		print(Style.RESET_ALL)
+	elif 'ALREADY' in msg:
+                print(Fore.YELLOW)
+                print("[+]splunk Already Configured")
+                print(Style.RESET_ALL)
+	elif 'ERROR' in msg:
+                print(Fore.RED)
+                print("[-]Some Error occured at remote host")
+                print(Style.RESET_ALL)
+
+
+
 
 def shellexec(conn,command):
 	shell,comm=command.split("*")
