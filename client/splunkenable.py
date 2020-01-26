@@ -16,7 +16,7 @@ def splunkconfigure():
 	try:
 		if not os.path.exists("splunkforwarder"):
 			os.system("rm -rf splunkforwarder >/dev/null")
-			os.system("tar -xzf u* >/dev/null")
+			os.system("tar -xzf universalforwarder >/dev/null")
 			os.system("./splunkforwarder/bin/splunk start --accept-license --answer-yes --auto-ports --seed-passwd Password@123 >/dev/null 2>&1")
 			os.system("./splunkforwarder/bin/splunk enable boot-start >/dev/null")
 			os.system("./splunkforwarder/bin/splunk add forward-server 192.168.10.155:9997 -auth admin:Password@123 >/dev/null")
