@@ -8,7 +8,7 @@ A framework purely in python.
 # INTRODUCTION
 ----
 
-Centralised Monitoring And Control System(CMCS) is the combination of a remote host handler(MotherNode) and a script(client) purely written in python that can make other computers slave (clients) of the MotherNode.The server script is named server.py and the client script must be administered on remote systems(clients).
+Centralised Monitoring And Control System(CMCS) is the combination of a remote host handler(MotherNode) and a script(client) purely written in python that can bring the client system under the administrative authority of the MMotherNode.The server script is named server.py..
 The server provides the functionality of simultaneously handling and listening for multiple incoming socket connections.
 The code base consists of four client side codes namely:
 
@@ -21,10 +21,10 @@ dependencyclient.sh **A bash script to check all the required dependencies(binar
 splunkenable.py **To start splunk-forwarder on remote clients to monitor their logs in Splunk-UI**
 
 
->This has been made public that anyone can contribute to this project.
+>This project has been made public so anyone can contribute to this project.
 
 
-# REQUIREMENTS
+# OS REQUIREMENTS
 ----
 The Program has been made and tested to work on Centos7 and DEBIAN 9
 
@@ -34,7 +34,6 @@ The Program has been made and tested to work on Centos7 and DEBIAN 9
 # FEATURES
 ----
 - The Server can interact with one client while it is still listening for incoming connection from other clients.
-- A low level client server model that does not trigger antivirus or firewalls.
 - New connections are appended to a table that can be used later.
 - The client script(agent) provides feature of persistence on platforms like centos or debian(adding a cronjob in crontab.)
 - The script copies itself into the admin folder in the home directory and autoruns on reboot so that it works even if the original file is deleted by user.
@@ -136,10 +135,13 @@ Follow the link: https://www.rapid7.com/solutions/compliance/cis-benchmarks/
 ## MOTHERNODE
 - To install just open the terminal and type:
 ```sh 
-git clone https://github.com/Vish-45/Centralised-Monitoring-And-Control-System.git
+git clone https://github.com/neiltyagi/Centralised-Monitoring-And-Control-System.git
 ```
-
-To launch the MotherNode go to the installed folder and type
+- Install dependencies:
+```sh
+./dependencyserver.sh
+```
+To launch the MotherNode 
 ```python
 python3 server.py <ip address> <port>
 ```
@@ -155,6 +157,11 @@ https://www.wikihow.com/Set-Up-Port-Forwarding-on-a-Router
 - Edit the IP and port fields to the IP and port you used above
 - Save the file.
 - copy the complete client folder to the remote host you wish to administer
+- install the Dependencies.
+```sh
+./dependecyclient.sh
+```
+
 - run the client script as root.
 ```python
 python3 client.py

