@@ -523,7 +523,7 @@ def quitsafely():
                 
         print(Fore.GREEN)
         print("\n --------------------------------------------------------------------------")
-        print("ALL BOTS ARE SLEEPING IT IS SAFE TO QUIT/EXIT NOW.")
+        print("ALL CLIENTS ARE SLEEPING IT IS SAFE TO QUIT/EXIT NOW.")
         print("EXITING IN 5 SECONDS")
         print(" --------------------------------------------------------------------------")
         print(Style.RESET_ALL)
@@ -578,7 +578,7 @@ def helpmothership():
     print("+----------------+--------------------------------------+")
     print("| showclients    | display table of connected clients   |")
     print("+----------------+--------------------------------------+")
-    print("| connect <index>| connect to bot at a specified index  |")
+    print("| connect <index>|connect to client at a specified index|")
     print("+----------------+--------------------------------------+")
     print("| exit           |exit the application(bots go to sleep)|")
     print("+----------------+--------------------------------------+")
