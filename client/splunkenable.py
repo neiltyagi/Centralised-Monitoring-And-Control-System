@@ -12,17 +12,17 @@ else:
 	b='linux_logs'
 
 
-def splunkconfigure():
+def splunkconfigure(ip):
 	try:
 		if not os.path.exists("splunkforwarder"):
 			os.system("rm -rf splunkforwarder >/dev/null")
 			os.system("tar -xzf universalforwarder >/dev/null")
 			os.system("./splunkforwarder/bin/splunk start --accept-license --answer-yes --auto-ports --seed-passwd Password@123 >/dev/null 2>&1")
 			os.system("./splunkforwarder/bin/splunk enable boot-start >/dev/null")
-			os.system("./splunkforwarder/bin/splunk add forward-server 192.168.10.155:9997 -auth admin:Password@123 >/dev/null")
+			os.system("./splunkforwarder/bin/splunk add forward-server "+ip+":9997 -auth admin:Password@123 >/dev/null")
 			os.system("./splunkforwarder/bin/splunk add monitor "+a+" -sourcetype "+b+" >/dev/null")
 			os.system("./splunkforwarder/bin/splunk list forward-server >/dev/null")
-			os.system("./splunkforwarder/bin/splunk set deploy-poll 192.168.10.155:9000 >/dev/null")
+			os.system("./splunkforwarder/bin/splunk set deploy-poll "+ip+":8000 >/dev/null")
 			with open("splunkforwarder/etc/system/local/inputs.conf", "a") as myfile:
 				myfile.write("[monitor://"+a+"]\nsourcetype="+b)
 			os.system("./splunkforwarder/bin/splunk restart >/dev/null")
